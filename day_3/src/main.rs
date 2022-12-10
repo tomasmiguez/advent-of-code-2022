@@ -1,6 +1,8 @@
+#![feature(iter_array_chunks)]
+
 use std::{
     io::{BufReader, BufRead},
-    fs::File,
+    fs::File, char,
 };
 
 fn main() {
@@ -8,23 +10,23 @@ fn main() {
     let reader = BufReader::new(file);
 
     let mut total_priority = 0;
-    for line in reader.lines() {
-        let backpack = line.unwrap();
-        total_priority += get_repeated_item(&backpack).and_then(item_to_priority).unwrap();
+    for elves_group_res in reader.lines().array_chunks::<3>() {
+        let elves_group = elves_group_res.map(|backpack_res| backpack_res.unwrap());
+        total_priority += get_group_badge(elves_group).and_then(item_to_priority).unwrap();
     }
 
     println!("The sum of priorities of the items is {}.", total_priority);
 }
 
-fn get_repeated_item(backpack: &str) -> Option<char> {
-    let first_compartment = &backpack[.. backpack.len()/2];
-    let second_compartment = &backpack[backpack.len()/2 ..];
-
-    // This can be done in O(n) with bucket sort or a hash map, instead of O(n^2)
-    // like here.
-    for item in first_compartment.chars() {
-        if second_compartment.chars().any(|possible_item| item == possible_item) {
-            return Some(item);
+fn get_group_badge(elves_group: [String; 3]) -> Option<char> {
+    // This can be done in O(n) instead of O(n^3) using counting.
+    for first_elve_item in elves_group[0].chars() {
+        for second_elve_item in elves_group[1].chars() {
+            for third_elve_item in elves_group[2].chars() {
+                if first_elve_item == second_elve_item && second_elve_item == third_elve_item {
+                    return Some(first_elve_item);
+                }
+            }
         }
     }
 
