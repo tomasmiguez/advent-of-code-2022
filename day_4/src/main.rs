@@ -10,7 +10,7 @@ fn main() {
         let first_sections = numbers[0] .. numbers[1]+1;
         let second_sections = numbers[2] .. numbers[3]+1;
 
-        if check_if_subsections(&first_sections, &second_sections) || check_if_subsections(&second_sections, &first_sections){
+        if check_if_intersection(&first_sections, &second_sections) || check_if_intersection(&second_sections, &first_sections){
             total_subsections += 1;
         }
     }
@@ -18,12 +18,12 @@ fn main() {
     println!("The number of tota subsections found is {}.", total_subsections);
 }
 
-fn check_if_subsections(first_sections: &Range<u32>, second_sections: &Range<u32>) -> bool {
+fn check_if_intersection(first_sections: &Range<u32>, second_sections: &Range<u32>) -> bool {
     for section in first_sections.clone() {
-        if !second_sections.contains(&section) {
-            return false;
+        if second_sections.contains(&section) {
+            return true;
         }
     }
 
-    true
+    false
 }
