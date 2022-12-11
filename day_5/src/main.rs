@@ -18,11 +18,15 @@ fn moved_stacks(input: &str) -> Vec<Vec<char>> {
                                                      .filter(|str| str.chars().all(char::is_numeric))
                                                      .filter_map(|str| str.parse().ok())
                                                      .collect();
+        let qtty = instruction_values[0];
+        let origin_idx = instruction_values[1]-1;
+        let destiny_idx = instruction_values[2]-1;
 
-        for _ in 0..instruction_values[0] {
-            let cargo = stacks[instruction_values[1]-1].pop().unwrap();
-            stacks[instruction_values[2]-1].push(cargo);
-        }
+        let (new_origin, moved) = stacks[origin_idx].split_at(stacks[origin_idx].len() - qtty);
+        let mut moved_cpy = moved.to_vec().to_owned();
+        stacks[origin_idx] = new_origin.to_vec();
+
+        stacks[destiny_idx].append(&mut moved_cpy);
     }
 
     stacks
